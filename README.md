@@ -17,9 +17,6 @@ Will replace all imports starting `./` or `../`
 
 ## Installing
 
-A quick introduction of the minimal setup you need to get a hello world up &
-running.
-
 ```shell
 $ git clone https://github.com/bluedaniel/js-codemod-import-absolute.git
 $ cd js-codemod-import-absolute
@@ -28,7 +25,7 @@ $ npm i
 
 ## Options
 
-```shell
+```
 --replace
 Replace a string in the new path
 
