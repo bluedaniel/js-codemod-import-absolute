@@ -1,0 +1,14 @@
+{
+  "name": "@bluedaniel/js-codemod-import-absolute",
+  "version": "1.0.0",
+  "description": "",
+  "main": "import-absolute.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Daniel Levitt <daniellevitt86@gmail.com>",
+  "license": "ISC",
+  "dependencies": {
+    "is-builtin-module": "^1.0.0"
+  }
+}
