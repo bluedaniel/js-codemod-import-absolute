@@ -25,11 +25,11 @@ import path from 'path';
 import chalk from 'chalk';
 import _ from 'lodash';
 import foo from 'src/foo';
-import qux from "/Users/daniellevitt/foo/qux";
-import foo from "/Users/daniellevitt/Sites/foo";
-import bar from "/Users/daniellevitt/Sites/test/bar";
-import baz from "/Users/daniellevitt/Sites/test/bar/baz";
-import main from "/Users/daniellevitt/Sites/test";
+import qux from "/Users/bluedaniel/foo/qux";
+import foo from "/Users/bluedaniel/Sites/foo";
+import bar from "/Users/bluedaniel/Sites/test/bar";
+import baz from "/Users/bluedaniel/Sites/test/bar/baz";
+import main from "/Users/bluedaniel/Sites/test";
 ```
 
 ## Installing
