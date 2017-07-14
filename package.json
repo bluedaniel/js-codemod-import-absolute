@@ -8,9 +8,12 @@
   },
   "author": "Daniel Levitt <daniellevitt86@gmail.com>",
   "license": "ISC",
-  "dependencies": {},
-  "devDependencies": {
+  "dependencies": {
     "eslint-plugin-import": "^2.7.0",
     "ramda": "^0.24.1"
+  },
+  "devDependencies": {
+    "eslint": "^3.19.0",
+    "eslint-config-airbnb-base": "^11.2.0"
   }
 }
