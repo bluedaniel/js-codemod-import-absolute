@@ -2,7 +2,7 @@
 
 Codemod to replace `["parent", "sibling", "index"]` imports with absolute or custom paths.
 
-It will also sort them according to the `eslint-plugin-import` [order rule](https://github.com/benmosher/eslint-plugin-import/blob/master/docs/rules/order.md)
+It can also sort according to the `eslint-plugin-import` [order rule](https://github.com/benmosher/eslint-plugin-import/blob/master/docs/rules/order.md).
 
 ```javascript
 // /Users/bluedaniel/Sites/test/index.js
