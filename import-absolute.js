@@ -1,6 +1,12 @@
 const fs = require('fs');
 const path = require('path');
-const { shouldReplace } = require('./helpers/matchers');
+
+const CURRENT_DIRECTORY_PREFIX = './';
+const PARENT_DIRECTORY_PREFIX = '../';
+
+export const shouldReplace = path =>
+  path.startsWith(CURRENT_DIRECTORY_PREFIX) ||
+  path.startsWith(PARENT_DIRECTORY_PREFIX);
 
 export default (file, api, opts) => {
   const j = api.jscodeshift;

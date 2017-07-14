@@ -8,7 +8,5 @@
   },
   "author": "Daniel Levitt <daniellevitt86@gmail.com>",
   "license": "ISC",
-  "dependencies": {
-    "is-builtin-module": "^1.0.0"
-  }
+  "dependencies": {}
 }
