@@ -1,13 +1,19 @@
-import fs from 'fs';
 import path from 'path';
 import {
+  applySpec,
   ascend,
   compose,
   descend,
   identity,
   indexOf,
+  lensPath,
   map,
+  nth,
+  prop,
+  propOr,
+  replace,
   reverse,
+  set,
   sortWith,
   takeLast
 } from 'ramda';
@@ -16,39 +22,45 @@ import resolveImportType from 'eslint-plugin-import/lib/core/importType';
 // Get the import type via `eslint-plugin-import`
 const getType = x => resolveImportType(x, { report: () => ({}), settings: {} });
 
-// Airbnb sorting
+// Airbnb sorting order
 const order = ['builtin', 'external', 'internal', 'parent', 'sibling', 'index'];
 
-// Scoring for import value
-const getOrderScore = val => indexOf(getType(val), reverse(order));
-
-// Sort func
+// Sort imports on type and then by name
 const sortImports = sortWith([
-  descend(x => getOrderScore(x.source.value)),
-  ascend(x => x.source.value)
+  descend(([, x]) => indexOf(x, reverse(order), x)),
+  ascend(([x]) => x.source.value)
 ]);
 
 // Last 3 items of order should be absolute paths
-export const shouldReplace = type => takeLast(3, order).includes(type);
+const shouldReplace = type => takeLast(3, order).includes(type);
 
 // Function to rename the import value
-export const renamePath = (filePath, modifier) => p => {
+const renamePath = (filePath, modifier) => p => {
   const importValue = p.source.value;
   const importType = getType(importValue);
 
   if (shouldReplace(importType)) {
     const absolutePath = path.resolve(filePath, importValue);
-    p.source.value = modifier(absolutePath);
+    return set(lensPath(['source', 'value']), modifier(absolutePath), p);
   }
   return p;
 };
 
-export default (file, api, opts) => {
+// Options with defaults
+const getOptions = applySpec({
+  replace: prop('replace'),
+  replaceWith: propOr('', 'replaceWith'),
+  sort: propOr(true, 'sort')
+});
+
+export default (file, api, options) => {
   const j = api.jscodeshift;
   const root = j(file.source);
 
+  const opts = getOptions(options);
+
   const modifier = opts.replace
-    ? x => x.replace(opts.replace, opts.replaceWith || '')
+    ? replace(opts.replace, opts.replaceWith)
     : identity;
 
   const filePath = path.resolve(process.cwd(), path.dirname(file.path));
@@ -56,8 +68,9 @@ export default (file, api, opts) => {
   const imports = root.find(j.ImportDeclaration);
 
   const newImports = compose(
-    map(renamePath(filePath, modifier)),
-    sortImports,
+    map(compose(renamePath(filePath, modifier), nth(0))),
+    opts.sort ? sortImports : identity,
+    map(x => [x, getType(x.source.value)]),
     x => x.nodes()
   )(imports);
 
