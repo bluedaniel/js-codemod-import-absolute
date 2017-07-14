@@ -8,5 +8,9 @@
   },
   "author": "Daniel Levitt <daniellevitt86@gmail.com>",
   "license": "ISC",
-  "dependencies": {}
+  "dependencies": {},
+  "devDependencies": {
+    "eslint-plugin-import": "^2.7.0",
+    "ramda": "^0.24.1"
+  }
 }

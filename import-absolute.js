@@ -1,12 +1,47 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
+import {
+  ascend,
+  compose,
+  descend,
+  identity,
+  indexOf,
+  map,
+  reverse,
+  sortWith,
+  takeLast
+} from 'ramda';
+import resolveImportType from 'eslint-plugin-import/lib/core/importType';
 
-const CURRENT_DIRECTORY_PREFIX = './';
-const PARENT_DIRECTORY_PREFIX = '../';
+// Get the import type via `eslint-plugin-import`
+const getType = x => resolveImportType(x, { report: () => ({}), settings: {} });
 
-export const shouldReplace = path =>
-  path.startsWith(CURRENT_DIRECTORY_PREFIX) ||
-  path.startsWith(PARENT_DIRECTORY_PREFIX);
+// Airbnb sorting
+const order = ['builtin', 'external', 'internal', 'parent', 'sibling', 'index'];
+
+// Scoring for import value
+const getOrderScore = val => indexOf(getType(val), reverse(order));
+
+// Sort func
+const sortImports = sortWith([
+  descend(x => getOrderScore(x.source.value)),
+  ascend(x => x.source.value)
+]);
+
+// Last 3 items of order should be absolute paths
+export const shouldReplace = type => takeLast(3, order).includes(type);
+
+// Function to rename the import value
+export const renamePath = (filePath, modifier) => p => {
+  const importValue = p.source.value;
+  const importType = getType(importValue);
+
+  if (shouldReplace(importType)) {
+    const absolutePath = path.resolve(filePath, importValue);
+    p.source.value = modifier(absolutePath);
+  }
+  return p;
+};
 
 export default (file, api, opts) => {
   const j = api.jscodeshift;
@@ -14,22 +49,19 @@ export default (file, api, opts) => {
 
   const modifier = opts.replace
     ? x => x.replace(opts.replace, opts.replaceWith || '')
-    : x => x;
+    : identity;
 
-  const filePath = path.resolve(
-    process.cwd(),
-    path.dirname(file.path)
-  );
+  const filePath = path.resolve(process.cwd(), path.dirname(file.path));
 
-  return root
-    .find(j.ImportDeclaration)
-    .forEach(p => {
-      const importValue = p.value.source.value;
+  const imports = root.find(j.ImportDeclaration);
 
-      if (shouldReplace(importValue)) {
-        const absolutePath = path.resolve(filePath, importValue);
-        p.value.source.value = modifier(absolutePath);
-      }
-    })
-    .toSource();
+  const newImports = compose(
+    map(renamePath(filePath, modifier)),
+    sortImports,
+    x => x.nodes()
+  )(imports);
+
+  imports.remove();
+
+  return root.find(j.Statement).at(0).insertBefore(newImports).toSource();
 };
