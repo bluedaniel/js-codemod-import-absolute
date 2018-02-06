@@ -15,7 +15,7 @@ import {
   reverse,
   set,
   sortWith,
-  takeLast
+  takeLast,
 } from 'ramda';
 import resolveImportType from 'eslint-plugin-import/lib/core/importType';
 
@@ -28,7 +28,7 @@ const order = ['builtin', 'external', 'internal', 'parent', 'sibling', 'index'];
 // Sort imports on type and then by name
 const sortImports = sortWith([
   descend(([, x]) => indexOf(x, reverse(order), x)),
-  ascend(([x]) => x.source.value)
+  ascend(([x]) => x.source.value),
 ]);
 
 // Last 3 items of order should be absolute paths
@@ -50,7 +50,7 @@ const renamePath = (filePath, modifier) => p => {
 const getOptions = applySpec({
   replace: prop('replace'),
   replaceWith: propOr('', 'replaceWith'),
-  sort: propOr(true, 'sort')
+  sort: propOr(true, 'sort'),
 });
 
 export default (file, api, options) => {
@@ -63,10 +63,12 @@ export default (file, api, options) => {
     ? replace(opts.replace, opts.replaceWith)
     : identity;
 
+  // Get absolute path
   const filePath = path.resolve(process.cwd(), path.dirname(file.path));
 
   const imports = root.find(j.ImportDeclaration);
 
+  // Rename imports with absolute path, also sort if option given
   const newImports = compose(
     map(compose(renamePath(filePath, modifier), nth(0))),
     opts.sort ? sortImports : identity,
@@ -74,7 +76,11 @@ export default (file, api, options) => {
     x => x.nodes()
   )(imports);
 
+  // Insert new imports
+  j(imports.at(0).get()).insertBefore(newImports);
+
+  // Remove old imports
   imports.remove();
 
-  return root.find(j.Statement).at(0).insertBefore(newImports).toSource();
+  return root.toSource();
 };
