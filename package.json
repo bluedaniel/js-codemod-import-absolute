@@ -5,7 +5,7 @@
   "main": "import-absolute.js",
   "repository": "git+https://github.com/bluedaniel/js-codemod-import-absolute.git",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "author": "Daniel Levitt <daniellevitt86@gmail.com>",
   "license": "ISC",
@@ -14,7 +14,13 @@
     "ramda": "^0.25.0"
   },
   "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-jest": "^22.1.0",
+    "babel-preset-env": "^1.6.1",
     "eslint": "^4.17.0",
-    "eslint-config-airbnb-base": "^12.1.0"
+    "eslint-config-airbnb-base": "^12.1.0",
+    "jest": "^22.1.4",
+    "jscodeshift": "^0.4.0",
+    "regenerator-runtime": "^0.11.1"
   }
 }

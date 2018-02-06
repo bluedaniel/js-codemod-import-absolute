@@ -16,6 +16,7 @@ import {
   set,
   sortWith,
   takeLast,
+  when,
 } from 'ramda';
 import resolveImportType from 'eslint-plugin-import/lib/core/importType';
 
@@ -40,7 +41,7 @@ const renamePath = (filePath, modifier) => p => {
   const importType = getType(importValue);
 
   if (shouldReplace(importType)) {
-    const absolutePath = path.resolve(filePath, importValue);
+    const absolutePath = path.join(filePath, importValue);
     return set(lensPath(['source', 'value']), modifier(absolutePath), p);
   }
   return p;
@@ -48,6 +49,7 @@ const renamePath = (filePath, modifier) => p => {
 
 // Options with defaults
 const getOptions = applySpec({
+  absolutePath: prop('absolutePath'),
   replace: prop('replace'),
   replaceWith: propOr('', 'replaceWith'),
   sort: propOr(true, 'sort'),
@@ -63,8 +65,13 @@ export default (file, api, options) => {
     ? replace(opts.replace, opts.replaceWith)
     : identity;
 
+  const currDir = process.cwd();
+
   // Get absolute path
-  const filePath = path.resolve(process.cwd(), path.dirname(file.path));
+  const filePath = compose(
+    when(() => opts.absolutePath, replace(currDir, opts.absolutePath)),
+    x => path.resolve(currDir, path.dirname(x.path))
+  )(file);
 
   const imports = root.find(j.ImportDeclaration);
 

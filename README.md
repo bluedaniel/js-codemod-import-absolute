@@ -40,11 +40,14 @@ $ cd js-codemod-import-absolute
 $ npm i
 ```
 
-## Options
+## Options (All are optional)
 
 ```
+--absolutePath
+Replaces your current directory to a string of your choosing
+
 --replace
-Replace a string in the new path
+Replace any string in the new path
 
 --replaceWith [default '']
 Replaces any occurrences of the string specified in `--replace`. Default is ''
