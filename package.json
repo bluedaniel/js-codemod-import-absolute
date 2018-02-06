@@ -3,17 +3,18 @@
   "version": "1.0.0",
   "description": "",
   "main": "import-absolute.js",
+  "repository": "git+https://github.com/bluedaniel/js-codemod-import-absolute.git",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Daniel Levitt <daniellevitt86@gmail.com>",
   "license": "ISC",
   "dependencies": {
-    "eslint-plugin-import": "^2.7.0",
-    "ramda": "^0.24.1"
+    "eslint-plugin-import": "^2.8.0",
+    "ramda": "^0.25.0"
   },
   "devDependencies": {
-    "eslint": "^3.19.0",
-    "eslint-config-airbnb-base": "^11.2.0"
+    "eslint": "^4.17.0",
+    "eslint-config-airbnb-base": "^12.1.0"
   }
 }
