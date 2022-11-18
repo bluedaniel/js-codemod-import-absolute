@@ -84,7 +84,10 @@ export default (file, api, options) => {
   )(imports);
 
   // Insert new imports
-  j(imports.at(0).get()).insertBefore(newImports);
+  const imp = imports.at(0);
+  if (imp.length > 0) {
+    j(imp.get()).insertBefore(newImports);
+  }
 
   // Remove old imports
   imports.remove();
